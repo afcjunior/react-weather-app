@@ -2,7 +2,17 @@ import React, { Component } from 'react';
 import '../css/App.css';
 import {Link, BrowserRouter as Router, Route} from 'react-router-dom'
 import CoordWeather from './CoordWeather'
-// ☁React.js app that consults the Open Weather API and manipulates it's data to list today's weather and this week's forecast for the city you input.
+// ☁React.js, React-Router app that consults both Open Weather and Google Maps' APIs, and gives you today's forecast based on your location. You can also input other cities by typing their names in.
+
+//TODO:
+//
+//      - Finish my CoordWeather component
+//      - Implement feature to give users the possibility of also typing in a city name, instead of just location
+//      - implement class names everywhere
+//      - make sure I used proptypes and default props properly
+//      - write CSS for the APP, mobile first.
+//      - host it on firebase and put that link on my github.
+
 
 const Header = (props) => (
   <header className="header">
