@@ -1,55 +1,31 @@
 import React, { Component } from 'react';
-import PropTypes from 'prop-types'
-
+import DisplayWeather from './DisplayWeather'
 // ☁React.js app that consults the Open Weather API and manipulates it's data to list today's weather and this week's forecast for the city you input.
-function CurrentWeather ({ city, greeting, wTemp, wTempMin, wTempMax }){
-    return(
-      <div className="CW-container">
-        <p className="CW-title"> {greeting}. I can see you're in {city}. Currently, it's</p>
-        <h1>{wTemp}°C</h1>
-        <p>Min: {wTempMin}°C  |  Max: {wTempMax}°C</p>
-      </div>
-    )
-}
+const InputField = () => (
+  <div className="input-button">
+    {/* <label className="inp">
+      <input type="text" id="city" placeholder="&nbsp;"/>
+      <span className="label">Or enter a different city...</span>
+      <span className="border"></span>
+    </label>
+    <input type="button"/> */}
+    custom input disabled for now
 
-CurrentWeather.propTypes = {
-  city: PropTypes.string,
-  greeting: PropTypes.string.isRequired,
-  wTemp: PropTypes.oneOfType([
-      PropTypes.string,
-      PropTypes.number
-  ]),
-  wTempMin: PropTypes.oneOfType([
-    PropTypes.string,
-    PropTypes.number
-  ]),
-  wTempMax: PropTypes.oneOfType([
-        PropTypes.string,
-        PropTypes.number
-  ]),
-}
+  </div>
+)
 
-CurrentWeather.defaultProps = {
-  city: 'some place',
-  greeting: 'Hello there',
-}
+class MainWeather extends Component {
 
-class CoordWeather extends Component {
-  static propTypes = {
-
-  }
   state = {
     city: '',
-    hour: new Date().getHours(),
+    hour: new Date(),
     lat: 0,
     long: 0,
-    weatherReport: {},
     temp: 0,
-    tempMax: 0,
-    tempMin: 0,
+    clouds: 0,
+    humidity: 0,
+    winds: 0,
   }
-
-
 
   //'business logic' within a component is yucky, but this is too small an app to justify redux, so here we are.
 
@@ -66,14 +42,14 @@ class CoordWeather extends Component {
         })
       })
     }else{
-      alert ('It seems Geolocation is not supported in this browser. Or you didn\'t want to share your location.')
+      alert ('It seems Geolocation is not supported in this browser, so this won\'t work here. Sorry.')
     }
   }
 
 
   timedGreeting = () => {
 
-    let time = this.state.hour
+    let time = this.state.hour.getHours()
     let greeting = ''
 
     if (time >= 3 && time < 12){
@@ -102,11 +78,15 @@ class CoordWeather extends Component {
     fetch(`${baseURL}lat=${lat}&lon=${lon}&appid=${apiKey}`)
       .then(response => response.json())
         .then(data => {
+          console.log(data)
           this.setState({
             weatherReport: data,
             temp: (data.main.temp - 273.15).toFixed(0),
-            tempMax: (data.main.temp_max - 273.15).toFixed(0),
-            tempMin: (data.main.temp_min - 273.15).toFixed(0)
+            clouds: data.clouds.all,
+            humidity: data.main.humidity,
+            winds: data.wind.speed,
+
+
           })
         })
   }
@@ -128,19 +108,25 @@ class CoordWeather extends Component {
 
   render() {
     return (
-      <div className="CoordWeather">
+      <div className="main-weather-container">
 
-        <CurrentWeather
+        <DisplayWeather
+          temp={this.state.temp}
+          clouds={this.state.clouds}
+          humidity={this.state.humidity}
+          winds={this.state.winds}
           city={this.state.city}
           greeting={this.timedGreeting()}
-          wTemp={this.state.temp}
-          wTempMax={this.state.tempMax}
-          wTempMin={this.state.tempMin}
+
         />
+
+        <InputField/>
+
+
 
       </div>
     );
   }
 }
 
-export default CoordWeather;
+export default MainWeather;
